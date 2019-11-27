@@ -8,15 +8,19 @@ namespace fileHandler;
  * @copyright (c) 2017, Rafael Perez
  */
 
-interface fileHandlerI 
-{    
+interface fileHandlerI {
+    
     public function getFileName(): string;
 
     public function getAccessMode(): string;
 
     public function getSize(string $fileName = null): int;
-        
+    
+    public function getFile();
+    
     public function getFileInfo(string $fileName = null): array;
+    
+    public function close();
     
     /**
      * 

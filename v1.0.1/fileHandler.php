@@ -3,6 +3,7 @@
 namespace fileHandler;
 
 require_once 'fileHandlerBase.php';
+require_once 'fileHandlerI.php';
 
 use fileHandler\fileHandlerBase;
 
@@ -12,7 +13,6 @@ use fileHandler\fileHandlerBase;
  * @copyright (c) 2017, Rafael Perez
  */
 
-class fileHandler extends fileHandlerBase
-{
+class fileHandler extends fileHandlerBase implements fileHandlerI{
     
 }
