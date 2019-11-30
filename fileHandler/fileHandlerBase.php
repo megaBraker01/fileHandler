@@ -11,7 +11,7 @@ use Exception;
  * @copyright (c) 2017, Rafael Perez
  */
 
-abstract class fileHandlerBase //implements fileHandlerI
+abstract class fileHandlerBase implements fileHandlerI
 {
     protected $fileName;
     protected $accessMode;
@@ -183,7 +183,7 @@ abstract class fileHandlerBase //implements fileHandlerI
     
     /**
      * cambie el nombre de un archivo
-     * se tiene que expecificar la extension del archivo, ej; archivo.txt
+     * se tiene que expecificar la extension del archivo en ambos parametros, ej; archivo.txt
      * @param string $newName
      * @param string $fileName
      * @return type
@@ -207,62 +207,20 @@ abstract class fileHandlerBase //implements fileHandlerI
      * @throws Exception
      */
     public function copy(string $fileToCopy = null, string $newFileName = null) {
-        if(is_null($fileToCopy)){
-            $fileToCopy = $this->getFileName();
-        } else {
-            $this->ifNotExistsThrowError($fileToCopy);
-        }
+        $fileToCopy = $fileToCopy ?? $this->getFileName();
+        $this->ifNotExistsThrowError($fileToCopy);
         
         if(is_null($newFileName)){
             $i = 1;
-            $newFileName = "copy {$i} {$fileToCopy}";
+            $originalNameFile = $this->getFileInfo($fileToCopy)['filename'];
+            $extension = $this->getFileInfo($fileToCopy)['extension'];
+            $newFileName = "$originalNameFile copy {$i}.{$extension}";
             while($this->exists($newFileName)){
                 $i++;
-                $newFileName = "copy {$i} {$fileToCopy}";
-            }
-            
-        }
-        
-        if(!$ret = copy($fileToCopy, $newFileName)){
-            throw new \Exception("[ERROR] No se pudo copiar el archivo '$fileToCopy'");
-        }
-        
-        return $ret;
-    }
-    
-    public function copy3(string $newName = null, string $fileName = null) {
-        $finalFileName = $fileName ?? $this->getFileName();
-        //$this->ifNotExistsThrowError($finalFileName);
-        if(is_null($newName)){
-            $i = 1;
-            $newName = "copy {$i} {$finalFileName}";
-            while ($this->exists($newName)){
-                $i++;
-                $newName = "copy {$i} {$finalFileName}";
+                $newFileName = "$originalNameFile copy {$i}.{$extension}";
             }
         }
         
-        if(!$ret = copy($finalFileName, $newName)){
-            throw new \Exception("[ERROR] No se pudo copiar el archivo '$finalFileName'");
-        }
-        
-        return $ret;
-    }
-    
-    public function copy2(string $fileToCopy = null, string $newFileName = null) {
-        
-        if(is_null($fileToCopy)){ // si es nulo es porque no se manda parametro y quiere copiar el archivo cargado, es decir, el nombre del propio objeto (si lo tiene)
-            $fileToCopy = $this->getFileName();
-        }
-        if(is_null($newFileName)){
-            $i = 1;
-            $newFileName = "copiar {$i} {$fileToCopy}";
-            while ($this->exists($newFileName)){
-                $i++;
-                $newFileName = "copy {$i} {$newFileName}";
-            }
-        }
-        //$finalFileName = $fileName ?? $this->getFileName();
         if(!$ret = copy($fileToCopy, $newFileName)){
             throw new \Exception("[ERROR] No se pudo copiar el archivo '$fileToCopy'");
         }
@@ -275,7 +233,7 @@ abstract class fileHandlerBase //implements fileHandlerI
      * @param string $fileName
      * @return type
      */
-    public function exists(string $fileName = null) {
+    public function exists(string $fileName = null): bool {
         $finalFileName = $fileName ?? $this->getFileName();
         return file_exists($finalFileName);
     }
@@ -287,7 +245,7 @@ abstract class fileHandlerBase //implements fileHandlerI
      */
     public function ifNotExistsThrowError(string $fileName = null) {
         if(!$fileName || !file_exists($fileName)){
-            throw new \Exception("[ERROR] El nombre de archivo '$fileName' NO es valido");
+            throw new \Exception("[ERROR] El archivo '$fileName' NO existe o el nombre NO es valido");
         }
     }
 
@@ -299,6 +257,7 @@ abstract class fileHandlerBase //implements fileHandlerI
      */
     public function delete(string $fileName = null) {
         $finalFileName = $fileName ?? $this->getFileName();
+        $this->ifNotExistsThrowError($finalFileName);
         if(!$ret = unlink($finalFileName)){
             throw new \Exception("[ERROR] No se pudo eliminar el archivo '$finalFileName'");
         }

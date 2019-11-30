@@ -10,12 +10,22 @@ namespace fileHandler;
 
 interface fileHandlerI 
 {    
-    public function getFileName(): string;
-
-    public function getAccessMode(): string;
-
+   public function getFileName(): string;
+   
+   public function getAccessMode(): string;
+   
+   /**
+     * 
+     * @param string $fileName
+     * @return int
+     */
     public function getSize(string $fileName = null): int;
-        
+    
+    /**
+     * 
+     * @param string $fileName
+     * @return array
+     */
     public function getFileInfo(string $fileName = null): array;
     
     /**
@@ -23,9 +33,17 @@ interface fileHandlerI
      * @param string $fileName
      * @param string $accessMode
      * @return $this
+     */
+    public function newFile(string $fileName, string $accessMode = "x+");
+    
+    /**
+     * 
+     * @param string $fileName
+     * @param string $accessMode
+     * @return type
      * @throws Exception
      */
-    public function newFile(string $fileName, string $accessMode = "a+");
+    public function openFile(string $fileName, string $accessMode = "a+");
     
     /**
      * 
@@ -33,23 +51,25 @@ interface fileHandlerI
      * @param int $bytes
      * @param string $accessMode
      * @return string
-     * @throws Exception
      */
     public function read(string $fileName = null, int $bytes = 1, string $accessMode = "r"): string;
-
+    
     /**
      * 
      * @param string $newContent
-     * @param bool $overwrite
+     * @param int $writeMode los posibles valores son:
+     * 1 escribe al final del archivo
+     * 0 sobreescribe el contenido del archivo
+     * -1 escribe al principio del archivo
      * @param string $fileName
      * @return type
      * @throws Exception
      */
-    public function write(string $newContent, bool $overwrite = false, string $fileName = null);
+    public function write(string $newContent, int $writeMode = 1, string $fileName = null);
     
     /**
      * cambie el nombre de un archivo
-     * se tiene que expecificar la extension del archivo, ej; archivo.txt
+     * se tiene que expecificar la extension del archivo en ambos parametros, ej; archivo.txt
      * @param string $newName
      * @param string $fileName
      * @return type
@@ -59,20 +79,27 @@ interface fileHandlerI
     
     /**
      * 
-     * @param string $newName
-     * @param string $fileName
+     * @param string $fileToCopy
+     * @param string $newFileName
      * @return type
      * @throws Exception
      */
-    public function copy(string $newName = null, string $fileName = null);
+    public function copy(string $fileToCopy = null, string $newFileName = null);
     
     /**
      * 
      * @param string $fileName
      * @return type
      */
-    public function exists(string $fileName = null);
-
+    public function exists(string $fileName = null): bool;
+    
+    /**
+     * 
+     * @param string $fileName
+     * @throws Exception
+     */
+    public function ifNotExistsThrowError(string $fileName = null);
+    
     /**
      * 
      * @param string $fileName
@@ -80,4 +107,5 @@ interface fileHandlerI
      * @throws Exception
      */
     public function delete(string $fileName = null);
+    
 }

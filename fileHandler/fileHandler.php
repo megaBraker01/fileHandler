@@ -3,7 +3,6 @@
 namespace fileHandler;
 
 require_once 'fileHandlerBase.php';
-
 use fileHandler\fileHandlerBase;
 
 /**
